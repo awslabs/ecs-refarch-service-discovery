@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style type="text/css">
+    body {
+      font-family: arial;
+      font-size: 14px;
+    }
+
+    .liveExample {
+      padding: 1em;
+      background-color: #EEEEDD;
+      border: 1px solid #CCC;
+      max-width: 655px;
+    }
+
+    .liveExample input {
+      font-family: Arial;
+    }
+
+    .liveExample b {
+      font-weight: bold;
+    }
+
+    .liveExample p {
+      margin-top: 0.9em;
+      margin-bottom: 0.9em;
+    }
+
+    .liveExample select[multiple] {
+      width: 100%;
+      height: 8em;
+    }
+
+    .liveExample h2 {
+      margin-top: 0.4em;
+    }
+
+    .ko-grid {
+      margin-bottom: 1em;
+      width: 25em;
+      border: 1px solid silver;
+      background-color: White;
+    }
+
+    .ko-grid th {
+      text-align: left;
+      background-color: Black;
+      color: White;
+    }
+
+    .ko-grid td,
+    th {
+      padding: 0.4em;
+    }
+
+    .ko-grid tr:nth-child(odd) {
+      background-color: #DDD;
+    }
+
+    .ko-grid-pageLinks {
+      margin-bottom: 1em;
+    }
+
+    .ko-grid-pageLinks a {
+      padding: 0.5em;
+    }
+
+    .ko-grid-pageLinks a.selected {
+      background-color: Black;
+      color: White;
+    }
+
+    .liveExample {
+      height: 20em;
+      overflow: auto
+    }
+    /* Mobile Safari reflows pages slowly, so fix the height to avoid the need for reflows */
+
+    li {
+      list-style-type: disc;
+      margin-left: 20px;
+    }
+  </style>
+
+
+  <title>ECS Bootcamp Microservices demo</title>
+  <script type="text/javascript" src="http://knockoutjs.com/downloads/knockout-3.2.0.js"></script>
+  <script type="text/javascript" src="http://knockoutjs.com/examples/resources/knockout.simpleGrid.3.0.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>
+
+</head>
+
+<body>
+  <!-- Start your code here -->
+  <h1>Stocks</h1>
+  <div class="liveExample">
+
+    <form data-bind="submit: addStock">
+      Add stock:
+      <input data-bind="value: newStockText" placeholder="Enter stock symbol">
+      <button type="submit">Add</button>
+    </form>
+
+    <div data-bind="simpleGrid: stocksGridViewModel"></div>
+
+    <button data-bind="click: sortStocksByName">
+      Sort by name
+    </button>
+
+    <button data-bind="click: sortStocksByPrice">
+      Sort by price
+    </button>
+
+    <button data-bind="click: stocksJumpToFirstPage, enable: stocksGridViewModel.currentPageIndex" disabled="">
+      Jump to first page
+    </button>
+
+    Powered by the <a href = 'http://finance.yahoo.com/' target = _new>Yahoo Finance API</a>
+
+  </div>
+
+  <h1>Weather</h1>
+  <div class="liveExample">
+
+    <form data-bind="submit: addCity">
+      Add city:
+      <input data-bind="value: newCityText" placeholder="Enter city name">
+      <button type="submit">Add</button>
+    </form>
+
+    <div data-bind="simpleGrid: citiesGridViewModel"></div>
+
+    <button data-bind="click: sortCitiesByName">
+      Sort by name
+    </button>
+
+    <button data-bind="click: sortCitiesByTemp">
+      Sort by temp
+    </button>
+
+
+    <button data-bind="click: citiesJumpToFirstPage, enable: citiesGridViewModel.currentPageIndex" disabled="">
+      Jump to first page
+    </button>
+
+    Powered by the <a href = 'http://openweathermap.org/' target = _new>Open Weather Map API</a>
+
+  </div>
+
+  <!-- End your code here -->
+
+  <script>
+
+    var PagedGridModel = function(stocks, cities) {
+      var self = this;
+      self.stocks = ko.observableArray(stocks);
+      self.cities = ko.observableArray(cities);
+      self.newStockText = ko.observable();
+      self.newCityText = ko.observable();
+
+      // Operations
+      self.addStock = function() {
+        // Load initial state from server, convert it to Task instances, then populate self.tasks
+        $.getJSON("/stock/" + this.newStockText(), function(allData) {
+          console.log("Got response: " + JSON.stringify(allData));
+          if (!allData.hasOwnProperty('error')) {
+            self.stocks.push(allData);
+            self.newStockText("");
+          }
+        }).done(function(msg) {
+          if (msg.hasOwnProperty('error')) {
+            alert("Error is: " + msg.error);
+          } else if (msg.containerid && msg.instanceid) {
+            alert("Container ID is: " + msg.containerid +
+                    ", Instance ID is: " + msg.instanceid);
+          }
+        });
+      };
+
+      self.sortStocksByName = function() {
+        self.stocks.sort(function(a, b) {
+          return a.name < b.name ? -1 : 1;
+        });
+      };
+
+      self.sortStocksByPrice = function() {
+        self.stocks.sort(function(a, b) {
+          return a.price < b.price ? -1 : 1;
+        });
+      };
+
+      self.stocksJumpToFirstPage = function() {
+        self.stocksGridViewModel.currentPageIndex(0);
+      };
+
+      self.stocksGridViewModel = new ko.simpleGrid.viewModel({
+        data: self.stocks,
+        columns: [{
+          headerText: "Stock Symbol",
+          rowText: "symbol"
+        }, {
+          headerText: "Stock Name",
+          rowText: "name"
+        }, {
+          headerText: "Price",
+          rowText: function(item) {
+            return "$" + Number(item.price).toFixed(2)
+          }
+        }],
+        pageSize: 4
+      });
+
+      // Operations
+      self.addCity= function() {
+        // Load initial state from server, convert it to Task instances, then populate self.tasks
+        $.getJSON("/weather/" + this.newCityText(), function(allData) {
+          console.log("Got response: " + JSON.stringify(allData));
+          if (!allData.hasOwnProperty('error')) {
+            self.cities.push(allData);
+            self.newCityText("");
+          }
+        }).done(function(msg) {
+          if (msg.hasOwnProperty('error')) {
+            alert("Error is: " + msg.error);
+          } else if (msg.containerid && msg.instanceid) {
+            alert("Container ID is: " + msg.containerid +
+                  ", Instance ID is: " + msg.instanceid);
+          }
+        });
+      };
+
+      self.sortCitiesByName = function() {
+        self.cities.sort(function(a, b) {
+          return a.city < b.city ? -1 : 1;
+        });
+      };
+
+      self.sortCitiesByTemp = function() {
+        self.cities.sort(function(a, b) {
+          return a.temp < b.temp ? -1 : 1;
+        });
+      };
+
+      self.citiesJumpToFirstPage = function() {
+        self.citiesGridViewModel.currentPageIndex(0);
+      };
+
+      self.citiesGridViewModel = new ko.simpleGrid.viewModel({
+        data: self.cities,
+        columns: [{
+          headerText: "City",
+          rowText: "city"
+        }, {
+          headerText: "Country",
+          rowText: "country"
+        }, {
+          headerText: "Temp",
+          rowText: "temp"
+        }],
+        pageSize: 4
+      });
+
+    };
+
+    ko.applyBindings(new PagedGridModel([], []));
+  </script>
+</body>

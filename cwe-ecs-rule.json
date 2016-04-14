@@ -1,0 +1,14 @@
+{
+  "detail-type": [
+    "AWS API Call via CloudTrail"
+  ],
+  "detail": {
+    "eventSource": [
+      "ecs.amazonaws.com"
+    ],
+    "eventName": [
+      "CreateService",
+      "DeleteService"
+    ]
+  }
+}
