@@ -141,7 +141,7 @@ This reference architecture sample is licensed under Apache 2.0.
 [5]: https://aws.amazon.com/elasticloadbalancing/
 [6]: https://aws.amazon.com/cloudtrail/
 [7]: http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchEvents.html
-[8]: <INSERT LINK TO DIAGRAM OF ARCHITECTURE>
+[8]: https://s3.amazonaws.com/amazonecs-reference-architectures/service-discovery/ecs-refarch-service-discovery.pdf
 [9]: https://aws.amazon.com/cloudformation/
 [10]: cfn-templates/ecs-refarch-service-discovery.template
 [11]: https://aws.amazon.com/vpc/
