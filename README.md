@@ -37,7 +37,7 @@ We expect that you have the following available:
     ```python
     > git clone https://github.com/awslabs/ecs-refarch-service-discovery
     ```
-    
+
 3. Get the login credentials to ECR registry by typing below command
 	```python
 	> aws ecr get-login | sh
@@ -48,26 +48,26 @@ We expect that you have the following available:
 
 6. Build the Docker containers in each of the subdirectories:
 
-```python
-> cd microservices
-> cd twitch
-> docker build -t twitchapp .
-> cd ../goodreads
-> docker build -t goodreadsapp .
-> cd ../portal
-> docker build -t portalapp .
-```
+    ```python
+    > cd microservices
+    > cd twitch
+    > docker build -t twitchapp .
+    > cd ../goodreads
+    > docker build -t goodreadsapp .
+    > cd ../portal
+    > docker build -t portalapp .
+    ```
 
 7. [Tag and Push the images](http://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html) to your ECR repository by typing these commands, replacing *123456789012* with your Account ID.
 
-```python
-> docker tag twitchapp:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/twitchapp:latest
-> docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/twitchapp:latest
-> docker tag goodreadsapp:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/goodreadsapp:latest
-> docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/goodreadsapp:latest
-> docker tag portalapp:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/portalapp:latest
-> docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/portalapp:latest
-```
+    ```python
+    > docker tag twitchapp:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/twitchapp:latest
+    > docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/twitchapp:latest
+    > docker tag goodreadsapp:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/goodreadsapp:latest
+    > docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/goodreadsapp:latest
+    > docker tag portalapp:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/portalapp:latest
+    > docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/portalapp:latest
+    ```
 
 > **Hint:** View the ECR repository in the ECS console and expand the **Build, tag, and push Docker image** section for more complete instructions.
 
