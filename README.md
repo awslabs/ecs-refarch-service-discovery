@@ -32,18 +32,14 @@ We expect that you have the following available:
 ### Build the microservices app and push the images to [ECR][18a]
 
 1. Use your desktop or an EC2 instance to build microservices container images. If you haven't installed Docker already, see the [documentation][19a] for further info.
-
 2. Clone this repository. You should see a *microservices* directory with three sub-directories, each containing the information needed to build three Docker containers.
-
-```python
-> git clone https://github.com/awslabs/ecs-refarch-service-discovery
-```
-
+	```python
+	> git clone https://github.com/awslabs/ecs-refarch-service-discovery
+	```
 3. Get the login credentials to ECR registry by typing below command
-```python
-> aws ecr get-login | sh
-```
-
+	```python
+	> aws ecr get-login | sh
+	```
 4. Navigate to the [ECS Console][20b] and click on **Repositories** on the left. Create a new repository and specify the name '*twitchapp*'
 
 5. Repeat the above step for '*goodreadsapp*' and '*portalapp*'
