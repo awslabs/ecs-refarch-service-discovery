@@ -148,6 +148,7 @@ Feel free to re-use this example in your application, or take it apart and make 
 
 ## Cleanup
 To delete what you created:
+
 1. Update service portalapp to 0 task, then delete it.
 2. Do the same for both the goodreadsapp and the TwitchApp.
 3. Delete the Lambda function.
