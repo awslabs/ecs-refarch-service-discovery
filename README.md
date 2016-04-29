@@ -33,7 +33,7 @@ We expect that you have the following available:
 
 1. Use your desktop or an EC2 instance to build microservices container images. If you haven't installed Docker already, see the [documentation][19a] for further info.
 2. Clone this repository. You should see a *microservices* directory with three sub-directories, each containing the information needed to build three Docker containers.
-	> git clone https://github.com/awslabs/ecs-refarch-service-discovery
+> git clone https://github.com/awslabs/ecs-refarch-service-discovery
 3. Get the login credentials to ECR registry by typing below command
 	```python
 	> aws ecr get-login | sh
