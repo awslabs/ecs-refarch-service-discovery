@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "Template00 - Creates environment needed for the ECS Reference Architecture: Service Discovery",
+    "Description" : "Creates environment needed for the ECS Reference Architecture: Service Discovery",
     "Metadata" : {
         "Maintainer" : { "Description" : "Chad Schmutzer <schmutze@amazon.com>" },
         "AWS::CloudFormation::Interface" : {
@@ -18,30 +18,32 @@
                     "Parameters" : [ "PrivateZone" ]
                 },
                 {
-                    "Label" : { "default" : "Weather App" },
-                    "Parameters" : [ "WeatherAppServiceName" , "WeatherAppPort" , "WeatherApiKey" ]
+                    "Label" : { "default" : "Twitch App" },
+                    "Parameters" : [ "TwitchAppServiceName" , "TwitchAppDockerImage", "TwitchAppPort" ]
                 },
                 {
-                    "Label" : { "default" : "Stocks App" },
-                    "Parameters" : [ "StocksAppServiceName" , "StocksAppPort" ]
+                    "Label" : { "default" : "Goodreads App" },
+                    "Parameters" : [ "GoodreadsAppServiceName" , "GoodreadsAppDockerImage", "GoodreadsAppPort" ]
                 },
                 {
                     "Label" : { "default" : "Portal App" },
-                    "Parameters" : [ "PortalAppServiceName" , "PortalAppPort" ]
+                    "Parameters" : [ "PortalAppServiceName" , "PortalAppDockerImage", "PortalAppPort" ]
                 }
             ],
             "ParameterLabels" : {
                 "KeyName" : { "default" : "Key Name" },
-                "ECSInstanceType" : { "default" : "ECS Instance Type" },
-                "ECSClusterInstanceCount" : { "default" : "ECS Cluster Instance Count" },
-                "PrivateZone" : { "default" : "Private Hosted Zone Name" },
-                "WeatherAppServiceName" : { "default" : "Weather App Service Name" },
-                "WeatherAppPort" : { "default" : "Weather App Port" },
-                "WeatherApiKey" : { "default" : "Weather API Key" },
-                "StocksAppServiceName" : { "default" : "Stocks App Service Name" },
-                "StocksAppPort" : { "default" : "Stocks App Port" },
-                "PortalAppServiceName" : { "default" : "Portal App Service Name" },
-                "PortalAppPort" : { "default" : "Portal App Port" }
+                "ECSInstanceType" : { "default" : "ECS instance type" },
+                "ECSClusterInstanceCount" : { "default" : "ECS cluster instance count" },
+                "PrivateZone" : { "default" : "Private hosted zone name" },
+                "TwitchAppServiceName" : { "default" : "Twitch app service name" },
+                "TwitchAppDockerImage" : { "default" : "Twitch app Docker image" },
+                "TwitchAppPort" : { "default" : "Twitch app port" },
+                "GoodreadsAppServiceName" : { "default" : "Goodreads app service name" },
+                "GoodreadsAppDockerImage" : { "default" : "Goodreads app Docker image" },
+                "GoodreadsAppPort" : { "default" : "Goodreads app port" },
+                "PortalAppServiceName" : { "default" : "Portal app service name" },
+                "PortalAppDockerImage" : { "default" : "Portal app Docker image" },
+                "PortalAppPort" : { "default" : "Portal app port" }
             }
         }
     },
@@ -66,88 +68,89 @@
         "PortalAppServiceName" : {
             "Type" : "String",
             "Description" : "The name of the Portal app ECS service",
-            "Default" : "portalapp",
-            "AllowedValues" : [ "portalapp" ]
+            "Default" : "portalapp"
         },
         "PortalAppPort" : {
             "Type" : "Number",
             "Description" : "The port the Portal app will run on",
-            "Default" : "80",
-            "AllowedValues" : [ "80" ]
+            "Default" : "80"
         },
-        "WeatherAppServiceName" : {
+        "PortalAppDockerImage" : {
             "Type" : "String",
-            "Description" : "The name of the Weather app ECS service",
-            "Default" : "weatherapp",
-            "AllowedValues" : [ "weatherapp" ]
+            "Description" : "The Portal app Docker image"
         },
-        "WeatherAppPort" : {
+        "TwitchAppServiceName" : {
+            "Type" : "String",
+            "Description" : "The name of the Twitch app ECS service",
+            "Default" : "twitchapp"
+        },
+        "TwitchAppPort" : {
             "Type" : "Number",
-            "Description" : "The port the Weather app will run on",
-            "Default" : "8080",
-            "AllowedValues" : [ "8080" ]
+            "Description" : "The port the Twitch app will run on",
+            "Default" : "8080"
         },
-        "StocksAppServiceName" : {
+        "TwitchAppDockerImage" : {
             "Type" : "String",
-            "Description" : "The name of the Stocks app ECS service",
-            "Default" : "stocksapp",
-            "AllowedValues" : [ "stocksapp" ]
+            "Description" : "The Twitch app Docker image"
         },
-        "StocksAppPort" : {
+        "GoodreadsAppServiceName" : {
+            "Type" : "String",
+            "Description" : "The name of the Goodreads app ECS service",
+            "Default" : "goodreadsapp"
+        },
+        "GoodreadsAppPort" : {
             "Type" : "Number",
-            "Description" : "The port the Stocks app will run on",
-            "Default" : "9090",
-            "AllowedValues" : [ "9090" ]
+            "Description" : "The port the Goodreads app will run on",
+            "Default" : "9090"
         },
-        "WeatherApiKey" : {
+        "GoodreadsAppDockerImage" : {
             "Type" : "String",
-            "Description" : "The OpenWeatherMap API Key"
+            "Description" : "The Goodreads app Docker image"
         },
         "PrivateZone" : {
             "Type" : "String",
             "Description" : "Private hosted zone name",
-            "Default" : "ecs.internal",
-            "AllowedValues" : [ "ecs.internal" ]
+            "Default" : "ecs.internal"
         }
     },
     "Mappings" : {
         "AmazonLinuxAMI" : {
             "us-east-1" : {
-                "AMI" : "ami-43043329"
+                "AMI" : "ami-67a3a90d"
             },
             "us-west-1" : {
-                "AMI" : "ami-a77b0ac7"
+                "AMI" : "ami-b7d5a8d7"
             },
             "us-west-2" : {
-                "AMI" : "ami-02a24162"
+                "AMI" : "ami-c7a451a7"
             },
             "eu-west-1" : {
-                "AMI" : "ami-76e95b05"
+                "AMI" : "ami-9c9819ef"
             },
             "eu-central-1" : {
-                "AMI" : "ami-96b6adfa"
+                "AMI" : "ami-9aeb0af5"
             },
             "ap-northeast-1" : {
-                "AMI" : "ami-18d8de76"
+                "AMI" : "ami-7e4a5b10"
             },
             "ap-southeast-1" : {
-                "AMI" : "ami-9f60aefc"
+                "AMI" : "ami-be63a9dd"
             },
             "ap-southeast-2" : {
-                "AMI" : "ami-75a38416"
+                "AMI" : "ami-b8cbe8db"
             }
         },
         "VPCLayout" : {
             "VPC" : { "CIDR" : "10.5.0.0/16" },
             "PublicSubnet1Config" : { "CIDR" : "10.5.10.0/24" },
-            "PublicSubnet2Config" : { "CIDR" : "10.5.15.0/24" }    
+            "PublicSubnet2Config" : { "CIDR" : "10.5.15.0/24" }
         }
     },
-    "Resources" : {     
+    "Resources" : {
         "LoadBalancerPortalApp" : {
             "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties" : {
-                "Subnets" : [ 
+                "Subnets" : [
                     { "Ref" : "PublicSubnet1" },
                     { "Ref" : "PublicSubnet2" }
                 ],
@@ -174,29 +177,29 @@
                 "Scheme" : "internet-facing"
             }
         },
-        "LoadBalancerWeatherApp" : {
+        "LoadBalancerTwitchApp" : {
             "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties" : {
-                "Subnets" : [ 
+                "Subnets" : [
                     { "Ref" : "PublicSubnet1" },
                     { "Ref" : "PublicSubnet2" }
                 ],
                 "Listeners" : [
                     {
                         "LoadBalancerPort" : "80",
-                        "InstancePort" : { "Ref" : "WeatherAppPort" },
+                        "InstancePort" : { "Ref" : "TwitchAppPort" },
                         "Protocol" : "TCP"
                     }
                 ],
                 "HealthCheck" : {
-                    "Target" : { "Fn::Join" : [ "", [ "HTTP:", { "Ref" : "WeatherAppPort" }, "/health" ] ] },
+                    "Target" : { "Fn::Join" : [ "", [ "HTTP:", { "Ref" : "TwitchAppPort" }, "/health" ] ] },
                     "HealthyThreshold" : "2",
                     "UnhealthyThreshold" : "5",
                     "Interval" : "5",
                     "Timeout" : "4"
                 },
                 "CrossZone" : "true",
-                "SecurityGroups" : [ { "Ref" : "LoadBalancerWeatherAppSecurityGroup" } ],
+                "SecurityGroups" : [ { "Ref" : "LoadBalancerTwitchAppSecurityGroup" } ],
                 "ConnectionDrainingPolicy" : {
                     "Enabled" : "true",
                     "Timeout" : "60"
@@ -204,29 +207,29 @@
                 "Scheme" : "internal"
             }
         },
-        "LoadBalancerStocksApp" : {
+        "LoadBalancerGoodreadsApp" : {
             "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
             "Properties" : {
-                "Subnets" : [ 
+                "Subnets" : [
                     { "Ref" : "PublicSubnet1" },
                     { "Ref" : "PublicSubnet2" }
                 ],
                 "Listeners" : [
                     {
                         "LoadBalancerPort" : "80",
-                        "InstancePort" : { "Ref" : "StocksAppPort" },
+                        "InstancePort" : { "Ref" : "GoodreadsAppPort" },
                         "Protocol" : "TCP"
                     }
                 ],
                 "HealthCheck" : {
-                    "Target" : { "Fn::Join" : [ "", [ "HTTP:", { "Ref" : "StocksAppPort" }, "/health" ] ] },
+                    "Target" : { "Fn::Join" : [ "", [ "HTTP:", { "Ref" : "GoodreadsAppPort" }, "/health" ] ] },
                     "HealthyThreshold" : "2",
                     "UnhealthyThreshold" : "5",
                     "Interval" : "5",
                     "Timeout" : "4"
                 },
                 "CrossZone" : "true",
-                "SecurityGroups" : [ { "Ref" : "LoadBalancerStocksAppSecurityGroup" } ],
+                "SecurityGroups" : [ { "Ref" : "LoadBalancerGoodreadsAppSecurityGroup" } ],
                 "ConnectionDrainingPolicy" : {
                     "Enabled" : "true",
                     "Timeout" : "60"
@@ -501,52 +504,52 @@
                 ]
             }
         },
-        "LoadBalancerWeatherAppSecurityGroup" : {
+        "LoadBalancerTwitchAppSecurityGroup" : {
             "Type" : "AWS::EC2::SecurityGroup",
             "Properties" : {
-                "GroupDescription" : "LoadBalancer Weather app Security Group",
+                "GroupDescription" : "LoadBalancer Twitch app Security Group",
                 "VpcId" : {
                     "Ref" : "VPC"
                 },
                 "Tags" : [
                     {
                         "Key" : "Name",
-                        "Value" : "LoadBalancerWeatherAppSecurityGroup"
+                        "Value" : "LoadBalancerTwitchAppSecurityGroup"
                     }
                 ]
             }
         },
-        "LoadBalancerWeatherAppSecurityGroupIngress" : {
+        "LoadBalancerTwitchAppSecurityGroupIngress" : {
             "Type" : "AWS::EC2::SecurityGroupIngress",
             "DependsOn" : "ECSInstanceSecurityGroup",
             "Properties" : {
-                "GroupId" : { "Ref" : "LoadBalancerWeatherAppSecurityGroup" },
+                "GroupId" : { "Ref" : "LoadBalancerTwitchAppSecurityGroup" },
                 "IpProtocol" : "tcp",
                 "FromPort" : "80",
                 "ToPort" : "80",
                 "SourceSecurityGroupId" : { "Ref" : "ECSInstanceSecurityGroup" }
             }
         },
-        "LoadBalancerStocksAppSecurityGroup" : {
+        "LoadBalancerGoodreadsAppSecurityGroup" : {
             "Type" : "AWS::EC2::SecurityGroup",
             "Properties" : {
-                "GroupDescription" : "LoadBalancer Stocks app Security Group",
+                "GroupDescription" : "LoadBalancer Goodreads app Security Group",
                 "VpcId" : {
                     "Ref" : "VPC"
                 },
                 "Tags" : [
                     {
                         "Key" : "Name",
-                        "Value" : "LoadBalancerStocksAppSecurityGroup"
+                        "Value" : "LoadBalancerGoodreadsAppSecurityGroup"
                     }
                 ]
             }
         },
-        "LoadBalancerStocksAppSecurityGroupIngress" : {
+        "LoadBalancerGoodreadsAppSecurityGroupIngress" : {
             "Type" : "AWS::EC2::SecurityGroupIngress",
             "DependsOn" : "ECSInstanceSecurityGroup",
             "Properties" : {
-                "GroupId" : { "Ref" : "LoadBalancerStocksAppSecurityGroup" },
+                "GroupId" : { "Ref" : "LoadBalancerGoodreadsAppSecurityGroup" },
                 "IpProtocol" : "tcp",
                 "FromPort" : "80",
                 "ToPort" : "80",
@@ -569,17 +572,6 @@
                 ]
             }
         },
-        "ECSInstanceSecurityGroup22" : {
-            "Type" : "AWS::EC2::SecurityGroupIngress",
-            "DependsOn" : "LoadBalancerPortalAppSecurityGroup",
-            "Properties" : {
-                "GroupId" : { "Ref" : "ECSInstanceSecurityGroup" },
-                "IpProtocol" : "tcp",
-                "FromPort" : "22",
-                "ToPort" : "22",
-                "CidrIp" : "0.0.0.0/0"
-            }
-        },
         "ECSInstanceSecurityGroupPortalApp" : {
             "Type" : "AWS::EC2::SecurityGroupIngress",
             "DependsOn" : "LoadBalancerPortalAppSecurityGroup",
@@ -591,26 +583,26 @@
                 "SourceSecurityGroupId" : { "Ref" : "LoadBalancerPortalAppSecurityGroup" }
             }
         },
-        "ECSInstanceSecurityGroupWeatherApp" : {
+        "ECSInstanceSecurityGroupTwitchApp" : {
             "Type" : "AWS::EC2::SecurityGroupIngress",
-            "DependsOn" : "LoadBalancerWeatherAppSecurityGroup",
+            "DependsOn" : "LoadBalancerTwitchAppSecurityGroup",
             "Properties" : {
                 "GroupId" : { "Ref" : "ECSInstanceSecurityGroup" },
                 "IpProtocol" : "tcp",
-                "FromPort" : { "Ref" : "WeatherAppPort" },
-                "ToPort" : { "Ref" : "WeatherAppPort" },
-                "SourceSecurityGroupId" : { "Ref" : "LoadBalancerWeatherAppSecurityGroup" }
+                "FromPort" : { "Ref" : "TwitchAppPort" },
+                "ToPort" : { "Ref" : "TwitchAppPort" },
+                "SourceSecurityGroupId" : { "Ref" : "LoadBalancerTwitchAppSecurityGroup" }
             }
         },
-        "ECSInstanceSecurityGroupStocksApp" : {
+        "ECSInstanceSecurityGroupGoodreadsApp" : {
             "Type" : "AWS::EC2::SecurityGroupIngress",
-            "DependsOn" : "LoadBalancerStocksAppSecurityGroup",
+            "DependsOn" : "LoadBalancerGoodreadsAppSecurityGroup",
             "Properties" : {
                 "GroupId" : { "Ref" : "ECSInstanceSecurityGroup" },
                 "IpProtocol" : "tcp",
-                "FromPort" : { "Ref" : "StocksAppPort" },
-                "ToPort" : { "Ref" : "StocksAppPort" },
-                "SourceSecurityGroupId" : { "Ref" : "LoadBalancerStocksAppSecurityGroup" }
+                "FromPort" : { "Ref" : "GoodreadsAppPort" },
+                "ToPort" : { "Ref" : "GoodreadsAppPort" },
+                "SourceSecurityGroupId" : { "Ref" : "LoadBalancerGoodreadsAppSecurityGroup" }
             }
         },
         "ECSInstanceRole" : {
@@ -738,7 +730,7 @@
                 "ContainerDefinitions" : [
                     {
                         "Name" : "PortalApp",
-                        "Image" : "681800210136.dkr.ecr.us-east-1.amazonaws.com/portal:latest",
+                        "Image" : { "Ref" : "PortalAppDockerImage" },
                         "Memory" : "100",
                         "Cpu" : "100",
                         "PortMappings" : [
@@ -749,18 +741,18 @@
                         ],
                         "Environment" : [
                             {
-                                "Name" : "WEATHERAPPENDPOINT",
+                                "Name" : "TWITCHAPPENDPOINT",
                                 "Value" : { "Fn::Join" : [ "", [
-                                    { "Ref" : "WeatherAppServiceName" },
+                                    { "Ref" : "TwitchAppServiceName" },
                                     ".",
                                     { "Ref" : "PrivateZone" },
                                     ":80"
                                 ] ] }
                             },
                             {
-                                "Name" : "STOCKSAPPENDPOINT",
+                                "Name" : "GOODREADSAPPENDPOINT",
                                 "Value" : { "Fn::Join" : [ "", [
-                                    { "Ref" : "StocksAppServiceName" },
+                                    { "Ref" : "GoodreadsAppServiceName" },
                                     ".",
                                     { "Ref" : "PrivateZone" },
                                     ":80"
@@ -771,43 +763,37 @@
                 ]
             }
         },
-        "ECSTaskDefinitionWeatherApp" : {
+        "ECSTaskDefinitionTwitchApp" : {
             "Type" : "AWS::ECS::TaskDefinition",
             "Properties" : {
                 "ContainerDefinitions" : [
                     {
-                        "Name" : "WeatherApp",
-                        "Image" : "681800210136.dkr.ecr.us-east-1.amazonaws.com/weather:latest",
+                        "Name" : "TwitchApp",
+                        "Image" : { "Ref" : "TwitchAppDockerImage" },
                         "Memory" : "100",
                         "Cpu" : "100",
                         "PortMappings" : [
                             {
-                                "HostPort" : { "Ref" : "WeatherAppPort" },
+                                "HostPort" : { "Ref" : "TwitchAppPort" },
                                 "ContainerPort" : "80"
-                            }
-                        ],
-                        "Environment" : [
-                            {
-                                "Name" : "API_KEY",
-                                "Value" : { "Ref" : "WeatherApiKey" }
                             }
                         ]
                     }
                 ]
             }
         },
-        "ECSTaskDefinitionStocksApp" : {
+        "ECSTaskDefinitionGoodreadsApp" : {
             "Type" : "AWS::ECS::TaskDefinition",
             "Properties" : {
                 "ContainerDefinitions" : [
                     {
-                        "Name" : "StocksApp",
-                        "Image" : "681800210136.dkr.ecr.us-east-1.amazonaws.com/stocks:latest",
+                        "Name" : "GoodreadsApp",
+                        "Image" : { "Ref" : "GoodreadsAppDockerImage" },
                         "Memory" : "100",
                         "Cpu" : "100",
                         "PortMappings" : [
                             {
-                                "HostPort" : { "Ref" : "StocksAppPort" },
+                                "HostPort" : { "Ref" : "GoodreadsAppPort" },
                                 "ContainerPort" : "80"
                             }
                         ]
@@ -845,16 +831,16 @@
                 "Ref" : "LoadBalancerPortalApp"
             }
         },
-        "LoadBalancerWeatherApp" : {
-            "Description" : "Name of the Weather app load balancer",
+        "LoadBalancerTwitchApp" : {
+            "Description" : "Name of the Twitch app load balancer",
             "Value" : {
-                "Ref" : "LoadBalancerWeatherApp"
+                "Ref" : "LoadBalancerTwitchApp"
             }
         },
-        "LoadBalancerStocksApp" : {
-            "Description" : "Name of the Stocks app load balancer",
+        "LoadBalancerGoodreadsApp" : {
+            "Description" : "Name of the Goodreads app load balancer",
             "Value" : {
-                "Ref" : "LoadBalancerStocksApp"
+                "Ref" : "LoadBalancerGoodreadsApp"
             }
         },
         "ECSClusterName" : {
@@ -863,16 +849,16 @@
                 "Ref" : "ECSCluster"
             }
         },
-        "StocksAppTaskDefinition" : {
-            "Description" : "The task definition for the stocks app",
+        "GoodreadsAppTaskDefinition" : {
+            "Description" : "The task definition for the Goodreads app",
             "Value" : {
-                "Ref" : "ECSTaskDefinitionStocksApp"
+                "Ref" : "ECSTaskDefinitionGoodreadsApp"
             }
         },
-        "WeatherAppTaskDefinition" : {
-            "Description" : "The task definition for the weather app",
+        "TwitchAppTaskDefinition" : {
+            "Description" : "The task definition for the twitch app",
             "Value" : {
-                "Ref" : "ECSTaskDefinitionWeatherApp"
+                "Ref" : "ECSTaskDefinitionTwitchApp"
             }
         },
         "PortalAppTaskDefinition" : {

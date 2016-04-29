@@ -10,7 +10,7 @@
 
     .liveExample {
       padding: 1em;
-      background-color: #EEEEDD;
+      background-color: #F2BF00;
       border: 1px solid #CCC;
       max-width: 655px;
     }
@@ -39,7 +39,7 @@
 
     .ko-grid {
       margin-bottom: 1em;
-      width: 25em;
+      width: 100%;
       border: 1px solid silver;
       background-color: White;
     }
@@ -85,7 +85,7 @@
   </style>
 
 
-  <title>ECS Bootcamp Microservices demo</title>
+  <title>ECS Reference Architecture - Service Discovery</title>
   <script type="text/javascript" src="http://knockoutjs.com/downloads/knockout-3.2.0.js"></script>
   <script type="text/javascript" src="http://knockoutjs.com/examples/resources/knockout.simpleGrid.3.0.js"></script>
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>
@@ -94,58 +94,66 @@
 
 <body>
   <!-- Start your code here -->
-  <h1>Stocks</h1>
+  <h1>Goodreads</h1>
   <div class="liveExample">
 
-    <form data-bind="submit: addStock">
-      Add stock:
-      <input data-bind="value: newStockText" placeholder="Enter stock symbol">
+    <form data-bind="submit: addBook">
+      Add Book:
+      <input pattern=".{10}|.{13}" required data-bind="value: newBookText" placeholder="Enter ISBN (10 or 13)">
       <button type="submit">Add</button>
     </form>
 
-    <div data-bind="simpleGrid: stocksGridViewModel"></div>
+    <div data-bind="simpleGrid: booksGridViewModel"></div>
 
-    <button data-bind="click: sortStocksByName">
-      Sort by name
+    <button data-bind="click: sortBooksByISBN">
+      Sort by ISBN
     </button>
 
-    <button data-bind="click: sortStocksByPrice">
-      Sort by price
+    <button data-bind="click: sortBooksByNumberOfRatings">
+      Sort by number of ratings
     </button>
 
-    <button data-bind="click: stocksJumpToFirstPage, enable: stocksGridViewModel.currentPageIndex" disabled="">
+    <button data-bind="click: sortBooksByNumberOfReviews">
+      Sort by number of reviews
+    </button>
+
+    <button data-bind="click: sortBooksByAverageRating">
+      Sort by average rating
+    </button>
+
+    <button data-bind="click: booksJumpToFirstPage, enable: booksGridViewModel.currentPageIndex" disabled="">
       Jump to first page
     </button>
 
-    Powered by the <a href = 'http://finance.yahoo.com/' target = _new>Yahoo Finance API</a>
+    Powered by the <a href = 'http://www.goodreads.com/' target = _new>Goodreads API</a>
 
   </div>
 
-  <h1>Weather</h1>
+  <h1>Twitch</h1>
   <div class="liveExample">
 
-    <form data-bind="submit: addCity">
-      Add city:
-      <input data-bind="value: newCityText" placeholder="Enter city name">
+    <form data-bind="submit: addGame">
+      Add game:
+      <input data-bind="value: newGameText" placeholder="Enter game name">
       <button type="submit">Add</button>
     </form>
 
-    <div data-bind="simpleGrid: citiesGridViewModel"></div>
+    <div data-bind="simpleGrid: gamesGridViewModel"></div>
 
-    <button data-bind="click: sortCitiesByName">
+    <button data-bind="click: sortGamesByName">
       Sort by name
     </button>
 
-    <button data-bind="click: sortCitiesByTemp">
-      Sort by temp
+    <button data-bind="click: sortGamesByPopularity">
+      Sort by popularity
     </button>
 
 
-    <button data-bind="click: citiesJumpToFirstPage, enable: citiesGridViewModel.currentPageIndex" disabled="">
+    <button data-bind="click: gamesJumpToFirstPage, enable: gamesGridViewModel.currentPageIndex" disabled="">
       Jump to first page
     </button>
 
-    Powered by the <a href = 'http://openweathermap.org/' target = _new>Open Weather Map API</a>
+    Powered by the <a href = 'https://www.twitch.tv' target = _new>Twitch API</a>
 
   </div>
 
@@ -153,73 +161,88 @@
 
   <script>
 
-    var PagedGridModel = function(stocks, cities) {
+    var PagedGridModel = function(books, games) {
       var self = this;
-      self.stocks = ko.observableArray(stocks);
-      self.cities = ko.observableArray(cities);
-      self.newStockText = ko.observable();
-      self.newCityText = ko.observable();
+      self.books = ko.observableArray(books);
+      self.games = ko.observableArray(games);
+      self.newBookText = ko.observable();
+      self.newGameText = ko.observable();
 
       // Operations
-      self.addStock = function() {
+      self.addBook = function() {
         // Load initial state from server, convert it to Task instances, then populate self.tasks
-        $.getJSON("/stock/" + this.newStockText(), function(allData) {
+        $.getJSON("/book/" + this.newBookText(), function(allData) {
           console.log("Got response: " + JSON.stringify(allData));
           if (!allData.hasOwnProperty('error')) {
-            self.stocks.push(allData);
-            self.newStockText("");
+            self.books.push(allData);
+            self.newBookText("");
           }
         }).done(function(msg) {
           if (msg.hasOwnProperty('error')) {
-            alert("Error is: " + msg.error);
+            alert("Error is: " + msg.error +
+              "Container ID is: " + msg.containerid +
+              ", Instance ID is: " + msg.instanceid);
           } else if (msg.containerid && msg.instanceid) {
             alert("Container ID is: " + msg.containerid +
-                    ", Instance ID is: " + msg.instanceid);
+              ", Instance ID is: " + msg.instanceid);
           }
         });
       };
 
-      self.sortStocksByName = function() {
-        self.stocks.sort(function(a, b) {
-          return a.name < b.name ? -1 : 1;
+      self.sortBooksByISBN = function() {
+        self.books.sort(function(a, b) {
+          return a.isbn < b.isbn ? -1 : 1;
         });
       };
 
-      self.sortStocksByPrice = function() {
-        self.stocks.sort(function(a, b) {
-          return a.price < b.price ? -1 : 1;
+      self.sortBooksByNumberOfRatings = function() {
+        self.books.sort(function(a, b) {
+          return b.ratingscount < a.ratingscount ? -1 : 1;
         });
       };
 
-      self.stocksJumpToFirstPage = function() {
-        self.stocksGridViewModel.currentPageIndex(0);
+      self.sortBooksByNumberOfReviews = function() {
+        self.books.sort(function(a, b) {
+          return b.reviewscount < a.reviewscount ? -1 : 1;
+        });
       };
 
-      self.stocksGridViewModel = new ko.simpleGrid.viewModel({
-        data: self.stocks,
+      self.sortBooksByAverageRating = function() {
+        self.books.sort(function(a, b) {
+          return b.averagerating < a.averagerating ? -1 : 1;
+        });
+      };
+
+      self.booksJumpToFirstPage = function() {
+        self.booksGridViewModel.currentPageIndex(0);
+      };
+
+      self.booksGridViewModel = new ko.simpleGrid.viewModel({
+        data: self.books,
         columns: [{
-          headerText: "Stock Symbol",
-          rowText: "symbol"
+          headerText: "ISBN",
+          rowText: "isbn"
         }, {
-          headerText: "Stock Name",
-          rowText: "name"
+          headerText: "Number of Ratings",
+          rowText: "ratingscount"
         }, {
-          headerText: "Price",
-          rowText: function(item) {
-            return "$" + Number(item.price).toFixed(2)
-          }
+          headerText: "Number of Reviews",
+          rowText: "reviewscount"
+        }, {
+          headerText: "Average Rating",
+          rowText: "averagerating"       
         }],
         pageSize: 4
       });
 
       // Operations
-      self.addCity= function() {
+      self.addGame= function() {
         // Load initial state from server, convert it to Task instances, then populate self.tasks
-        $.getJSON("/weather/" + this.newCityText(), function(allData) {
+        $.getJSON("/game/" + this.newGameText(), function(allData) {
           console.log("Got response: " + JSON.stringify(allData));
           if (!allData.hasOwnProperty('error')) {
-            self.cities.push(allData);
-            self.newCityText("");
+            self.games.push(allData);
+            self.newGameText("");
           }
         }).done(function(msg) {
           if (msg.hasOwnProperty('error')) {
@@ -231,33 +254,33 @@
         });
       };
 
-      self.sortCitiesByName = function() {
-        self.cities.sort(function(a, b) {
-          return a.city < b.city ? -1 : 1;
+      self.sortGamesByName = function() {
+        self.games.sort(function(a, b) {
+          return a.game < b.game ? -1 : 1;
         });
       };
 
-      self.sortCitiesByTemp = function() {
-        self.cities.sort(function(a, b) {
-          return a.temp < b.temp ? -1 : 1;
+      self.sortGamesByPopularity = function() {
+        self.games.sort(function(a, b) {
+          return b.popularity < a.popularity ? -1 : 1;
         });
       };
 
-      self.citiesJumpToFirstPage = function() {
-        self.citiesGridViewModel.currentPageIndex(0);
+      self.gamesJumpToFirstPage = function() {
+        self.gamesGridViewModel.currentPageIndex(0);
       };
 
-      self.citiesGridViewModel = new ko.simpleGrid.viewModel({
-        data: self.cities,
+      self.gamesGridViewModel = new ko.simpleGrid.viewModel({
+        data: self.games,
         columns: [{
-          headerText: "City",
-          rowText: "city"
+          headerText: "Name",
+          rowText: "name"
         }, {
-          headerText: "Country",
-          rowText: "country"
+          headerText: "Popularity",
+          rowText: "popularity"
         }, {
-          headerText: "Temp",
-          rowText: "temp"
+          headerText: "Box",
+          rowText: "box"
         }],
         pageSize: 4
       });
