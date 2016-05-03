@@ -1,17 +1,17 @@
-# ECS Reference Architecture: Service Discovery
+# Amazon EC2 Container Service - Reference Architecture: Service Discovery
 Service discovery is a key component of most distributed systems and service-oriented architectures. With service discovery, services are automatically discovered as they get created and terminated on a given infrastructure. This reference architecture illustrates how service discovery can be built on AWS.
 
 ## Background
-Many AWS customers build service-oriented, distributed applications using services such as ECS or [Amazon EC2][2]. The distributed nature of this type of architecture requires a fair amount of integration and synchronization, and the answer to that problem is not trivial. Quite often, our customers build such a functionality themselves and this can be time-consuming. Or they use a third-party solution and this often comes with a financial cost.
+Many AWS customers build service-oriented, distributed applications using services such as [Amazon EC2 Container Service][1] (Amazon ECS) or [Amazon EC2][2]. The distributed nature of this type of architecture requires a fair amount of integration and synchronization, and the answer to that problem is not trivial. Quite often, our customers build such a functionality themselves and this can be time-consuming. Or they use a third-party solution and this often comes with a financial cost.
 
 ## Solution
-In this reference architecture, we propose that by leveraging Amazon ECS, [Amazon Route 53][3] and [AWS Lambda][4], we can eliminate a lot of the work required to install, operate, and scale Service Discovery at the cluster level.
+In this reference architecture, we propose that by leveraging Amazon ECS, [Amazon Route 53][3] and [AWS Lambda][4], we can eliminate a lot of the work required to install, operate, and scale service discovery at the cluster level.
 
 In this example, a web portal application (PortalApp) presents information from a Twitch application (TwitchApp) and a GoodReads application (GoodreadsApp). As instances of these applications are created within ECS, they are placed behind [Elastic Load Balancing][5] load balancers. When they come up, they generate an event in [AWS CloudTrail][6] which is picked up by [Amazon CloudWatch Events][7]. This in turn triggers a Lambda function, which essentially "registers" the service into an Amazon Route 53 private hosted zone. That CNAME mapping then points to the appropriate load balancers. It is then what the web portal (PortalApp) uses to access both TwitchApp and GoodreadsApp.
 
 Specifically, the architecture described in this [diagram][8] can be created with an [AWS CloudFormation][9] template. That [template][10] does the following:
 - Creates a [VPC][11] with two subnets and their route tables, as well as an Internet gateway
-- Creates appropriate [IAM][12] roles (for the container instances, ECS and Lambda)
+- Creates appropriate [IAM][12] roles (for the EC2 instances, ECS and Lambda)
 - Deploys an ECS cluster onto which will be launched a web portal application, a Twitch application, and a GoodReads application
 - Creates load balancers and [security groups][13] for the three applications
 - Creates an [Auto Scaling group][14] for your ECS cluster, with its accompanying [launch configuration][15]
@@ -24,14 +24,14 @@ Here are the steps that you must take to deploy the architecture.
 
 ### Prerequisites
 We expect that you have the following available:
-- A host onto which you can build Docker images
-	- it should have [Docker][17a] 
-	- and [Git][17b] installed
-	- as well as [AWS CLI][17c] installed and [configured][17d]. Make sure that the role that the AWS CLI will use is permissioned to push images to ECR (e.g. [AmazonEC2ContainerRegistryPowerUser][17e])
+- A host onto which you can build [Docker][17a] images
+	- it should have [Docker][17b] 
+	- and [Git][17c] installed
+	- as well as [AWS CLI][17d] installed and [configured][17e]. Make sure that the role that the AWS CLI will use is permissioned to push images to ECR (e.g. [AmazonEC2ContainerRegistryPowerUser][17f])
 
 ### Build the microservices app and push the images to [ECR][18a]
 
-1. Use your desktop or an EC2 instance to build microservices container images. If you haven't installed Docker already, see the [documentation][19a] for further info.
+1. Use your desktop or an EC2 instance to build microservices [container][18b] images. If you haven't installed Docker already, see the [documentation][19a] for further info.
 
 2. Clone this repository. You should see a *microservices* directory with three sub-directories, each containing the information needed to build three Docker containers.
     ```python
@@ -182,12 +182,14 @@ This reference architecture sample is licensed under the Apache License, Version
 [15]: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/LaunchConfiguration.html
 [16]: http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHostedZones.html
 [17]: https://tools.ietf.org/html/rfc1035
-[17a]: https://docs.docker.com/engine/installation/
-[17b]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
-[17c]: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
-[17d]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
-[17e]: https://docs.aws.amazon.com/AmazonECR/latest/userguide/ecr_managed_policies.html#AmazonEC2ContainerRegistryPowerUser
+[17a]: https://aws.amazon.com/docker/
+[17b]: https://docs.docker.com/engine/installation/
+[17c]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+[17d]: https://docs.aws.amazon.com/cli/latest/userguide/installing.html
+[17e]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+[17f]: https://docs.aws.amazon.com/AmazonECR/latest/userguide/ecr_managed_policies.html#AmazonEC2ContainerRegistryPowerUser
 [18a]: http://aws.amazon.com/ecr/
+[18b]: https://aws.amazon.com/containers/
 [19a]: http://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html#install_docker
 [20]: https://console.aws.amazon.com/cloudformation
 [20a]: https://github.com/awslabs/service-discovery-ecs-consul
