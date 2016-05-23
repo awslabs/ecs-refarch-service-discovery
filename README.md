@@ -94,7 +94,7 @@ It might be a good idea to keep the **Output** tab open for the rest of this ste
 3. Name your function, e.g. *registerEcsServiceDns*.
 4. For **Runtime**, choose **Python 2.7** and replace the code with the content of this [Python file][24].
 6. In the code, replace "Route53PrivateHostedZoneID" with your Route53PrivateHostedZoneID which was one of the output values from your AWS CloudFormation template.
-7. In the code, replease "ECSClusterName" with your ECSClusterName which was one of the output values from your AWS CloudFormation template.
+7. In the code, replace "ECSClusterName" with your ECSClusterName which was one of the output values from your AWS CloudFormation template.
 8. Under **Lambda function handler and role**, leave the default 'lambda_function.lambda_handler' for **Handler**. For **Role**, select the [service role][28] that was created you for by AWS CloudFormation. (You took note of it earlier.)
 9. Increase the timeout to 10 sec and choose **Next**.
 10. Review your Lambda function settings and choose **Create Function**.
