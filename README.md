@@ -15,16 +15,19 @@ Specifically, the architecture described in this [diagram][8] can be created wit
 - Deploys an ECS cluster onto which will be launched a web portal application, a Twitch application, and a GoodReads application
 - Creates load balancers and [security groups][13] for the three applications
 - Creates an [Auto Scaling group][14] for your ECS cluster, with its accompanying [launch configuration][15]
-- Creates a private [Amazon Route 53 hosted zone][16] (i.e., internal DNS)
+- Creates a private [Amazon Route 53 hosted zone][15a] (i.e., internal DNS)
 
-**Note:** The names of the ECS services have to be [DNS-compliant][17] as they are re-used as CNAME  values.
+**Note:** The names of the ECS services have to be [DNS-compliant][15b] as they are re-used as CNAME values.
 
 ## Deploying the architecture
 Here are the steps that you must take to deploy the architecture.
 
 ### Prerequisites
-We expect that you have the following available:
-- A host onto which you can build [Docker][17a] images
+
+1. [AWS CloudTrail][16] must be enabled in the AWS Region used to launch this reference architecture, as CloudTrail events are used to trigger the service discovery process. AWS CloudTrail is a web service that records API calls made on your account and delivers log files to your Amazon S3 bucket. The quickest way to get started with CloudTrail is to use the [AWS Management Console][16a]. You can turn on CloudTrail in a few clicks.
+
+2. We expect that you have the following available:
+  - A host onto which you can build [Docker][17a] images
 	- it should have [Docker][17b] 
 	- and [Git][17c] installed
 	- as well as [AWS CLI][17d] installed and [configured][17e]. Make sure that the role that the AWS CLI will use is permissioned to push images to ECR (e.g. [AmazonEC2ContainerRegistryPowerUser][17f])
@@ -90,7 +93,7 @@ It might be a good idea to keep the **Output** tab open for the rest of this ste
 
 ### Create your [Lambda][4] function
 1. Open the [Lambda console][23].
-2. Choose **Create a Lambda function**, **Skip**.
+2. Choose **Create a Lambda function**, **Next** on Select Blueprint, **Next** on Configure triggers.
 3. Name your function, e.g. *registerEcsServiceDns*.
 4. For **Runtime**, choose **Python 2.7** and replace the code with the content of this [Python file][24].
 6. In the code, replace "Route53PrivateHostedZoneID" with your Route53PrivateHostedZoneID which was one of the output values from your AWS CloudFormation template.
@@ -104,7 +107,7 @@ It might be a good idea to keep the **Output** tab open for the rest of this ste
 2. On the left side, choose **Events**, **Create Rule**.
 3. Choose **Show Advanced Options**, **Edit** to edit the JSON version. Replace the default value with the contents of the [linked CWE file][26].
 5. Choose **Add Target** and select the Lambda function that was created in previous step.
-6. Choose **Configure Details**, name your rule, and choose **Create Rule**.
+6. Choose **Configure Details**, name your rule (e.g. registerEcsServiceDnsRule), make sure **State Enabled** checkbox is checked, and choose **Create rule**.
 
 ### Create your three services
 
@@ -133,7 +136,7 @@ Repeat this procedure for the other two services, modifying values as follows:
 1. Navigate to the details of your PortalApp service. (If you followed the steps above, that's the page that should be in front of you right now.)
 2. Click the load balancer name to open the Elastic Load Balancing management page.
 3. Copy the value in **DNS Name** and paste it into a browser's address bar.
-4. Test GoodreadsApp: Enter and ISBN (e.g. "0316219282") and press enter.
+4. Test GoodreadsApp: Enter an ISBN (e.g. "0316219282") and press enter.
 5. Test TwitchApp: Enter a video game name (e.g. "Minecraft") and press enter.
 
 ## Conclusion
@@ -180,8 +183,10 @@ This reference architecture sample is licensed under the Apache License, Version
 [13]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Security.html
 [14]: https://aws.amazon.com/autoscaling/
 [15]: http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/LaunchConfiguration.html
-[16]: http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHostedZones.html
-[17]: https://tools.ietf.org/html/rfc1035
+[15a]: http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHostedZones.html
+[15b]: https://tools.ietf.org/html/rfc1035
+[16]: https://aws.amazon.com/cloudtrail/
+[16a]: https://console.aws.amazon.com/cloudtrail/home
 [17a]: https://aws.amazon.com/docker/
 [17b]: https://docs.docker.com/engine/installation/
 [17c]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
