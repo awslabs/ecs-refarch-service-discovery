@@ -72,6 +72,8 @@ func GameHandler(res http.ResponseWriter, req *http.Request) {
 	v := url.Values{}
 	v.Add("query", name)
 	v.Add("type", "suggest")
+	v.Add("client_id", GetHttpClientId())
+	// "bdif1ss8to51t3igvrbbek2gijvf6k")
 
 	s := "https://api.twitch.tv/kraken/search/games?" + v.Encode()
 	log.Printf("Sending GET request %s\n", s)
@@ -126,6 +128,15 @@ func GetHttpPassord() string {
 		return http_password
 	}
 	return "password" // default password
+}
+
+// set the Twitch Client Id based on env variable TWITCH_CLIENT_ID
+// if not present return "client_id"
+func GetHttpClientId() string {
+	if http_client_id := os.Getenv("TWITCH_CLIENT_ID"); len(http_client_id) > 0 {
+		return http_client_id
+	}
+	return "client_id" // default client_id 
 }
 
 // Unmsarshal json response
@@ -194,6 +205,7 @@ func GetContainerId() string {
 }
 
 // Get the Instance ID if exists
+/*
 func GetInstanceId() string {
 	cmd := "curl"
 	cmdArgs := []string{"-s", "http://169.254.169.254/latest/meta-data/instance-id"}
@@ -204,4 +216,15 @@ func GetInstanceId() string {
 	}
 	log.Printf("The instance id is %s\n", out)
 	return string(out)
+}
+*/
+func GetInstanceId() string {
+		
+		name, err := os.Hostname()
+
+        if err != nil {
+            log.Printf("Instance Id err is %s\n", err)
+			return ""
+        }
+        return string(name)
 }
