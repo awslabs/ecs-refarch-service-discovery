@@ -117,7 +117,7 @@ func GameHandler(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// get the Goodreads service endpoint from environment variable
+// GetGoodreadsEndpoint gets the Goodreads service endpoint from environment variable
 func GetGoodreadsEndpoint() string {
 	goodreadsapp_endpoint := os.Getenv("GOODREADSAPPENDPOINT")
 	if len(goodreadsapp_endpoint) > 0 {
@@ -127,7 +127,7 @@ func GetGoodreadsEndpoint() string {
 	return "goodreadsapp.ecs.internal:80"
 }
 
-// get the twitch service endpoint from environment variable
+// GetTwitchEndpoint gets the twitch service endpoint from environment variable
 func GetTwitchEndpoint() string {
 	twitchapp_endpoint := os.Getenv("TWITCHAPPENDPOINT")
 	if len(twitchapp_endpoint) > 0 {
@@ -137,7 +137,7 @@ func GetTwitchEndpoint() string {
 	return "twitchapp.ecs.internal:80"
 }
 
-// get the goodreads service credentials
+// GetGoodreadsCredentials gets the goodreads service credentials
 func GetGoodreadsCredentials() (string, string) {
 	goodreads_user := os.Getenv("GOODREADS_USERNAME")
 	goodreads_pass := os.Getenv("GOODREADS_PASSWORD")
@@ -148,7 +148,7 @@ func GetGoodreadsCredentials() (string, string) {
 	return "admin", "password"
 }
 
-// get the twitch service credentials
+// GetTwitchCredentials gets the twitch service credentials
 func GetTwitchCredentials() (string, string) {
 	twitch_user := os.Getenv("TWITCH_USERNAME")
 	twitch_pass := os.Getenv("TWITCH_PASSWORD")
@@ -159,7 +159,7 @@ func GetTwitchCredentials() (string, string) {
 	return "admin", "password"
 }
 
-// get the html path
+// GetHtmlFileDir gets the html path
 func GetHtmlFileDir() string {
 	html_file_dir := os.Getenv("HTML_FILE_DIR")
 	if len(html_file_dir) > 0 {

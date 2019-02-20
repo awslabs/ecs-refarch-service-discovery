@@ -181,7 +181,7 @@ func GetData(jsonResponse string) (string, int64, string) {
 		game.Games[0].Box.Small
 }
 
-// Get the ContainerID if exists
+// GetContainerId gets the ContainerID if exists
 func GetContainerId() string {
 	cmd := "cat /proc/self/cgroup | grep \"docker\" | sed s/\\\\//\\\\n/g | tail -1"
 	out, err := exec.Command("bash", "-c", cmd).Output()
@@ -193,7 +193,7 @@ func GetContainerId() string {
 	return strings.TrimSpace(string(out))
 }
 
-// Get the Instance ID if exists
+// GetInstanceId gets the Instance ID if exists
 func GetInstanceId() string {
 	cmd := "curl"
 	cmdArgs := []string{"-s", "http://169.254.169.254/latest/meta-data/instance-id"}
